@@ -13,7 +13,7 @@ from flask import Flask, jsonify
 #################################################
 # Database Setup
 #################################################
-engine = create_engine("sqlite:///Resources/hawaii.sqlite", echo=False)
+engine = create_engine("sqlite:///Resources/hawaii.sqlite", echo=True)
 
 # reflect an existing database into a new model
 Base = automap_base()
@@ -46,8 +46,8 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<b.r/>"
-        f"/api/v1.0/<start<br/>"
-        f"/api/v1.0/<start>/<end>"
+        f"/api/v1.0/start/<start><br/>"
+        f"/api/v1.0/start_end/<start>/<end>"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -71,7 +71,6 @@ def precipitation():
     for date, prcp in one_year_data:
         precipitation_dict = {}
         precipitation_dict[date] = prcp
-        #precipitation_dict["precipitation"] = prcp
         all_precipitation.append(precipitation_dict)
 
     return jsonify(all_precipitation)
@@ -102,7 +101,7 @@ def stations():
 
 @app.route("/api/v1.0/tobs")
 def tobs():
-    # Create a dictionary from the row data and append to a list of all_active_station
+    # Create our session (link) from Python to the DB
     session = Session(engine)
 
     """Return data for the most active station (USC00519281)"""
@@ -123,7 +122,7 @@ def tobs():
     session.close()
     
    
-    #Convert list of tuples into normal list
+    # Create a dictionary from the row data and append to a list of all_active_station
     all_active_station = []
     for station, date, prcp, tobs in temp_last12_most_active:
         active_station_dict = {}
@@ -134,6 +133,43 @@ def tobs():
         all_active_station.append(active_station_dict)
         
     return jsonify(all_active_station)
+
+@app.route("/api/v1.0/start/<start>")
+def start_date(start):
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
+    """Return min, max, and average temperatures calculated from the given start date to the end of the dataset"""
+    #Query data from the selected start date
+    start = pd.to_datetime(start)
+    startdate = start.date()
+    data_from_date = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).\
+                filter(Measurement.date >= startdate)
+    
+    session.close()
+    result = [list(row) for row in data_from_date]
+    return jsonify(result)
+
+@app.route("/api/v1.0/start_end/<start>/<end>")
+def start_end(start, end):
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
+    """Return min, max, and average temperatures calculated from the given start date to the end of the dataset"""
+    #Query data from the selected start date
+    start = pd.to_datetime(start)
+    startdate = start.date()
+    end = pd.to_datetime(end)
+    enddate = end.date()
+    date_to_date = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).\
+                filter(Measurement.date >= startdate).\
+                filter(Measurement.date <= enddate)
+                
+    
+    session.close()
+    result = [list(row) for row in date_to_date]
+    return jsonify(result)
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
