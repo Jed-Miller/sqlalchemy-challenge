@@ -50,13 +50,13 @@ def welcome():
         f"/api/v1.0/stations<br/>"
         f"Returns list of stations and their info.<br/>"
         f"----------------------<br>"
-        f"/api/v1.0/tobs<b.r/>"
+        f"/api/v1.0/tobs<br/>"
         f"Return data for the most active station (USC00519281).<br/>"
         f"----------------------<br/>"
         f"/api/v1.0/start/<start><br/>"
-        f"Returns min, max, and average temperatures from user-provided start date to the end of the dataset<br/>"
+        f"Returns min, max, and average temperatures from user-provided start date to the end of the dataset.<br/>"
         f"----------------------<br/>"
-        f"/api/v1.0/start_end/<start>/<end>"
+        f"/api/v1.0/start_end/<start>/<end><br/>"
         f"Returns min, max, and average temperatures from user-provided start and end date<br/>"
     )
 
@@ -134,11 +134,9 @@ def tobs():
    
     # Create a dictionary from the row data and append to a list of all_active_station
     all_active_station = []
-    for station, date, prcp, tobs in temp_last12_most_active:
+    for date, prcp, tobs in temp_last12_most_active:
         active_station_dict = {}
-        active_station_dict["station"] = station
         active_station_dict["date"] = date
-        active_station_dict["precipitation"] = prcp
         active_station_dict["temperature"] = tobs
         all_active_station.append(active_station_dict)
         
@@ -160,16 +158,16 @@ def start_date(start):
 
     # Create a dictionary from the row data and append to a list of inputted_start_date
     inputted_start_date = []
-    for startdate, temp_min, temp_max, temp_avg in data_from_date:
+    for temp_min, temp_max, temp_avg in data_from_date:
         inputted_start_dict = {}
-        inputted_start_dict["startdate"] = startdate
-        inputted_start_dict["Temp_min"] = data_from_date[0]
-        inputted_start_dict["Temp_max"] = data_from_date[1]
-        inputted_start_dict["Temp_avg"] = data_from_date[2]
-        all_active_station.append(inputted_start_dict)
-    #result = [list(row) for row in data_from_date]
+        inputted_start_dict["Start Date"] = startdate
+        inputted_start_dict["Temp Min"] = temp_min
+        inputted_start_dict["Temp Max"] = temp_max
+        inputted_start_dict["Temp Avg"] = temp_avg
+        inputted_start_date.append(inputted_start_dict)
+    
 
-    return jsonify(result)
+    return jsonify(inputted_start_date)
 
 @app.route("/api/v1.0/start_end/<start>/<end>")
 def start_end(start, end):
@@ -188,8 +186,19 @@ def start_end(start, end):
                 
     
     session.close()
-    result = [list(row) for row in date_to_date]
-    return jsonify(result)
+    
+    # Create a dictionary from the row data and append to a list of inputted_start_date
+    inputted_start_end = []
+    for temp_min, temp_max, temp_avg in date_to_date:
+        start_end_dict = {}
+        start_end_dict["Start Date"] = startdate
+        start_end_dict["End Date"] = enddate
+        start_end_dict["Temp Min"] = temp_min
+        start_end_dict["Temp Max"] = temp_max
+        start_end_dict["Temp Avg"] = temp_avg
+        inputted_start_end.append(start_end_dict)
+
+    return jsonify(inputted_start_end)
     
 
 if __name__ == '__main__':
