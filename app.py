@@ -40,13 +40,21 @@ app = Flask(__name__)
 #################################################
 @app.route("/")
 def welcome():
-    """List all available api routes."""
+    """List of all available api routes."""
     return (
         f"Available Routes:<br/>"
+        f"----------------------<br>"
         f"/api/v1.0/precipitation<br/>"
+        f"Returns Date and Precipitation for latest year.<br/>"
+        f"----------------------<br>"
         f"/api/v1.0/stations<br/>"
+        f"Returns list of stations and their info.<br/>"
+        f"----------------------<br>"
         f"/api/v1.0/tobs<b.r/>"
+        f"Return data for the most active station (USC00519281).<br/>"
+        f"----------------------<br>"
         f"/api/v1.0/start/<start><br/>"
+        
         f"/api/v1.0/start_end/<start>/<end>"
     )
 
