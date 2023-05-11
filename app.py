@@ -157,7 +157,18 @@ def start_date(start):
                 filter(Measurement.date >= startdate)
     
     session.close()
-    result = [list(row) for row in data_from_date]
+
+    # Create a dictionary from the row data and append to a list of inputted_start_date
+    inputted_start_date = []
+    for startdate, temp_min, temp_max, temp_avg in data_from_date:
+        inputted_start_dict = {}
+        inputted_start_dict["startdate"] = startdate
+        inputted_start_dict["Temp_min"] = data_from_date[0]
+        inputted_start_dict["Temp_max"] = data_from_date[1]
+        inputted_start_dict["Temp_avg"] = data_from_date[2]
+        all_active_station.append(inputted_start_dict)
+    #result = [list(row) for row in data_from_date]
+
     return jsonify(result)
 
 @app.route("/api/v1.0/start_end/<start>/<end>")
@@ -165,7 +176,7 @@ def start_end(start, end):
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
-    """Return min, max, and average temperatures calculated from the given start date to the end of the dataset"""
+    """Return min, max, and average temperatures calculated from the provided start to end date."""
     #Query data from the selected start date
     start = pd.to_datetime(start)
     startdate = start.date()
