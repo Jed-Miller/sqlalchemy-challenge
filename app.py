@@ -52,10 +52,12 @@ def welcome():
         f"----------------------<br>"
         f"/api/v1.0/tobs<b.r/>"
         f"Return data for the most active station (USC00519281).<br/>"
-        f"----------------------<br>"
+        f"----------------------<br/>"
         f"/api/v1.0/start/<start><br/>"
-        
+        f"Returns min, max, and average temperatures from user-provided start date to the end of the dataset<br/>"
+        f"----------------------<br/>"
         f"/api/v1.0/start_end/<start>/<end>"
+        f"Returns min, max, and average temperatures from user-provided start and end date<br/>"
     )
 
 @app.route("/api/v1.0/precipitation")
