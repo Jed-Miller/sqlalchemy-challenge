@@ -28,4 +28,4 @@ After having completed my analysis of the data, I created an API using Flask. I 
     5. User-input Start Date Route
     6. User-input Start and End Date Route
 
-For each route, I create a list of dictionaries to provide the data needed for the route.
+For each route, I created a list of dictionaries to provide the data needed for the route.
